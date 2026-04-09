@@ -1,767 +1,1143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Job Radar — Live Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Cabinet+Grotesk:wght@400;500;700;900&display=swap" rel="stylesheet"/>
-<style>
-  :root {
-    --bg: #080b10;
-    --surface: #0f1318;
-    --surface2: #161c24;
-    --border: #1e2730;
-    --accent: #00e5a0;
-    --accent2: #ff6b35;
-    --accent3: #7c6aff;
-    --text: #e8edf2;
-    --muted: #5a6a7a;
-    --score-high: #00e5a0;
-    --score-mid: #f5c842;
-    --score-low: #ff5c5c;
-    --glow: 0 0 24px rgba(0,229,160,0.18);
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job Radar — Live Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Cabinet+Grotesk:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #080b10;
+      --surface: #0f1318;
+      --surface2: #161c24;
+      --border: #1e2730;
+      --accent: #00e5a0;
+      --accent2: #ff6b35;
+      --accent3: #7c6aff;
+      --text: #e8edf2;
+      --muted: #5a6a7a;
+      --score-high: #00e5a0;
+      --score-mid: #f5c842;
+      --score-low: #ff5c5c;
+      --glow: 0 0 24px rgba(0, 229, 160, .18);
+    }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Cabinet Grotesk', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Cabinet Grotesk', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,229,160,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,229,160,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(rgba(0, 229, 160, .03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0, 229, 160, .03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-  body::after {
-    content: '';
-    position: fixed;
-    top: -20%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 800px;
-    height: 500px;
-    background: radial-gradient(ellipse at center, rgba(0,229,160,0.06) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-  }
+    body::after {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 500px;
+      background: radial-gradient(ellipse at center, rgba(0, 229, 160, .06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
 
-  .container {
-    position: relative;
-    z-index: 1;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 24px 80px;
-  }
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 16px 80px;
+    }
 
-  header {
-    padding: 48px 0 40px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 24px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 40px;
-  }
+    header {
+      padding: 32px 0 28px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 28px;
+    }
 
-  .brand { display: flex; align-items: center; gap: 14px; }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-  .brand-icon {
-    width: 48px; height: 48px;
-    background: linear-gradient(135deg, var(--accent), var(--accent3));
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    box-shadow: var(--glow);
-    flex-shrink: 0;
-  }
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--accent), var(--accent3));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: var(--glow);
+      flex-shrink: 0;
+    }
 
-  .brand-text h1 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 2rem;
-    letter-spacing: -0.03em;
-    line-height: 1;
-    background: linear-gradient(90deg, var(--accent) 0%, #a0ffda 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
+    .brand-text h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      letter-spacing: -.03em;
+      line-height: 1;
+      background: linear-gradient(90deg, var(--accent) 0%, #a0ffda 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-  .brand-text p {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    color: var(--muted);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-top: 4px;
-  }
+    .brand-text p {
+      font-family: 'DM Mono', monospace;
+      font-size: .68rem;
+      color: var(--muted);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
 
-  .header-meta { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .header-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
 
-  .live-badge {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(0,229,160,0.08);
-    border: 1px solid rgba(0,229,160,0.25);
-    border-radius: 999px;
-    padding: 6px 14px;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    color: var(--accent);
-  }
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 229, 160, .08);
+      border: 1px solid rgba(0, 229, 160, .25);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-family: 'DM Mono', monospace;
+      font-size: .7rem;
+      letter-spacing: .08em;
+      color: var(--accent);
+    }
 
-  .live-dot {
-    width: 7px; height: 7px;
-    background: var(--accent);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-    box-shadow: 0 0 6px var(--accent);
-  }
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+      box-shadow: 0 0 6px var(--accent);
+    }
 
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.8); }
-  }
+    @keyframes pulse {
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: .5;
+        transform: scale(.8);
+      }
+    }
 
-  .refresh-btn {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--text);
-    padding: 8px 18px;
-    font-family: 'Cabinet Grotesk', sans-serif;
-    font-size: 0.88rem;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex; align-items: center; gap: 8px;
-    transition: all 0.2s;
-  }
+    .refresh-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      padding: 8px 16px;
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: .85rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all .2s;
+      white-space: nowrap;
+    }
 
-  .refresh-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,229,160,0.05); }
-  .refresh-btn svg { transition: transform 0.4s; }
-  .refresh-btn.spinning svg { animation: spin 0.6s linear; }
-  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .refresh-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(0, 229, 160, .05);
+    }
 
-  .stats-bar {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 16px;
-    margin-bottom: 36px;
-  }
+    .refresh-btn.spinning svg {
+      animation: spin .6s linear;
+    }
 
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px 24px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.2s, transform 0.2s;
-  }
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
-  .stat-card:hover { border-color: rgba(0,229,160,0.3); transform: translateY(-2px); }
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
 
-  .stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent), transparent);
-    opacity: 0.5;
-  }
+    @media(min-width: 480px) {
+      .stats-bar {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
 
-  .stat-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.68rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 18px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .2s, transform .2s;
+    }
 
-  .stat-value {
-    font-family: 'Syne', sans-serif;
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--accent);
-    line-height: 1;
-  }
+    .stat-card:hover {
+      border-color: rgba(0, 229, 160, .3);
+      transform: translateY(-2px);
+    }
 
-  .controls {
-    display: flex;
-    gap: 14px;
-    margin-bottom: 28px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      opacity: .5;
+    }
 
-  .search-wrap { position: relative; flex: 1; min-width: 220px; }
+    .stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: .64rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
 
-  .search-wrap svg {
-    position: absolute;
-    left: 14px; top: 50%;
-    transform: translateY(-50%);
-    color: var(--muted);
-    pointer-events: none;
-  }
+    .stat-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+    }
 
-  .search-input {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    color: var(--text);
-    padding: 11px 14px 11px 44px;
-    font-family: 'Cabinet Grotesk', sans-serif;
-    font-size: 0.92rem;
-    outline: none;
-    transition: border-color 0.2s;
-  }
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
 
-  .search-input::placeholder { color: var(--muted); }
-  .search-input:focus { border-color: rgba(0,229,160,0.5); }
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 200px;
+    }
 
-  .filter-select {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    color: var(--text);
-    padding: 11px 16px;
-    font-family: 'Cabinet Grotesk', sans-serif;
-    font-size: 0.88rem;
-    outline: none;
-    cursor: pointer;
-    transition: border-color 0.2s;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235a6a7a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 36px;
-  }
+    .search-wrap svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
 
-  .filter-select:focus { border-color: rgba(0,229,160,0.5); }
+    .search-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      padding: 10px 12px 10px 40px;
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: .88rem;
+      outline: none;
+      transition: border-color .2s;
+    }
 
-  .sort-btn {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    color: var(--muted);
-    padding: 11px 16px;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
+    .search-input::placeholder {
+      color: var(--muted);
+    }
 
-  .sort-btn.active, .sort-btn:hover {
-    border-color: rgba(0,229,160,0.4);
-    color: var(--accent);
-    background: rgba(0,229,160,0.06);
-  }
+    .search-input:focus {
+      border-color: rgba(0, 229, 160, .5);
+    }
 
-  .result-count {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.75rem;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-    padding: 0 4px 16px;
-  }
+    .filter-select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      padding: 10px 32px 10px 12px;
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: .85rem;
+      outline: none;
+      cursor: pointer;
+      transition: border-color .2s;
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235a6a7a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+    }
 
-  .result-count span { color: var(--accent); }
+    .filter-select:focus {
+      border-color: rgba(0, 229, 160, .5);
+    }
 
-  .table-wrapper {
-    overflow-x: auto;
-    border-radius: 18px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-  }
+    .sort-btns {
+      display: flex;
+      gap: 8px;
+    }
 
-  table { width: 100%; border-collapse: collapse; min-width: 800px; }
-  thead { background: var(--surface2); border-bottom: 1px solid var(--border); }
+    .sort-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--muted);
+      padding: 10px 14px;
+      font-family: 'DM Mono', monospace;
+      font-size: .72rem;
+      letter-spacing: .04em;
+      cursor: pointer;
+      transition: all .2s;
+      white-space: nowrap;
+    }
 
-  th {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.68rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--muted);
-    padding: 16px 20px;
-    text-align: left;
-    white-space: nowrap;
-    font-weight: 500;
-  }
+    .sort-btn.active,
+    .sort-btn:hover {
+      border-color: rgba(0, 229, 160, .4);
+      color: var(--accent);
+      background: rgba(0, 229, 160, .06);
+    }
 
-  th:first-child { border-radius: 18px 0 0 0; }
-  th:last-child { border-radius: 0 18px 0 0; }
+    .result-count {
+      font-family: 'DM Mono', monospace;
+      font-size: .73rem;
+      color: var(--muted);
+      letter-spacing: .05em;
+      padding: 0 4px 14px;
+    }
 
-  tbody tr {
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s;
-    animation: rowIn 0.3s ease both;
-  }
+    .result-count span {
+      color: var(--accent);
+    }
 
-  @keyframes rowIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+    /* ── TABLE (desktop) ── */
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
 
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: rgba(255,255,255,0.02); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+    }
 
-  td { padding: 18px 20px; font-size: 0.9rem; vertical-align: middle; }
+    thead {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
 
-  .job-title { font-weight: 700; font-size: 0.95rem; color: var(--text); line-height: 1.3; max-width: 220px; }
-  .company { font-weight: 600; color: var(--accent3); font-size: 0.85rem; }
+    th {
+      font-family: 'DM Mono', monospace;
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--muted);
+      padding: 14px 16px;
+      text-align: left;
+      white-space: nowrap;
+      font-weight: 500;
+    }
 
-  .location {
-    display: flex; align-items: center; gap: 6px;
-    color: var(--muted); font-size: 0.83rem; white-space: nowrap;
-  }
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background .15s;
+      animation: rowIn .3s ease both;
+    }
 
-  .location svg { flex-shrink: 0; }
+    @keyframes rowIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-  .posted-date { font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+    tbody tr:last-child {
+      border-bottom: none;
+    }
 
-  .app-count {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-family: 'DM Mono', monospace; font-size: 0.8rem;
-    color: var(--accent2);
-    background: rgba(255,107,53,0.1);
-    border: 1px solid rgba(255,107,53,0.2);
-    border-radius: 8px; padding: 4px 10px; white-space: nowrap;
-  }
+    tbody tr:hover {
+      background: rgba(255, 255, 255, .02);
+    }
 
-  /* Score bar — 1-10 scale */
-  .score-cell { display: flex; align-items: center; gap: 10px; min-width: 100px; }
+    td {
+      padding: 16px;
+      font-size: .87rem;
+      vertical-align: middle;
+    }
 
-  .score-bar-bg {
-    flex: 1;
-    height: 6px;
-    background: var(--border);
-    border-radius: 999px;
-    overflow: hidden;
-  }
+    .job-title {
+      font-weight: 700;
+      font-size: .92rem;
+      color: var(--text);
+      line-height: 1.3;
+      max-width: 200px;
+    }
 
-  .score-bar-fill { height: 100%; border-radius: 999px; }
+    .company {
+      font-weight: 600;
+      color: var(--accent3);
+      font-size: .82rem;
+    }
 
-  .score-num {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 0.92rem;
-    min-width: 24px;
-    text-align: right;
-  }
+    .location {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--muted);
+      font-size: .8rem;
+      white-space: nowrap;
+    }
 
-  .score-high-color { color: var(--score-high); }
-  .score-mid-color  { color: var(--score-mid); }
-  .score-low-color  { color: var(--score-low); }
+    .posted-date {
+      font-family: 'DM Mono', monospace;
+      font-size: .75rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
 
-  .score-bar-high { background: var(--score-high); }
-  .score-bar-mid  { background: var(--score-mid); }
-  .score-bar-low  { background: var(--score-low); }
+    .app-count {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'DM Mono', monospace;
+      font-size: .77rem;
+      color: var(--accent2);
+      background: rgba(255, 107, 53, .1);
+      border: 1px solid rgba(255, 107, 53, .2);
+      border-radius: 7px;
+      padding: 3px 8px;
+      white-space: nowrap;
+    }
 
-  .reason-text {
-    font-size: 0.82rem; color: var(--muted); max-width: 240px;
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
+    .score-cell {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 90px;
+    }
 
-  .apply-btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: linear-gradient(135deg, var(--accent), #00c98a);
-    color: #050d0a;
-    border: none; border-radius: 10px;
-    padding: 9px 18px;
-    font-family: 'Cabinet Grotesk', sans-serif;
-    font-weight: 700; font-size: 0.83rem;
-    cursor: pointer; text-decoration: none;
-    transition: all 0.2s; white-space: nowrap;
-    box-shadow: 0 4px 14px rgba(0,229,160,0.2);
-  }
+    .score-bar-bg {
+      flex: 1;
+      height: 5px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
 
-  .apply-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,229,160,0.35); }
-  .apply-btn:active { transform: translateY(0); }
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
 
-  .apply-btn.disabled {
-    background: var(--surface2); color: var(--muted);
-    border: 1px solid var(--border); box-shadow: none; cursor: default;
-  }
+    .score-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: .88rem;
+      min-width: 20px;
+      text-align: right;
+    }
 
-  .state-box {
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: center; padding: 80px 24px; gap: 16px;
-    color: var(--muted); font-family: 'DM Mono', monospace;
-    font-size: 0.85rem; letter-spacing: 0.05em;
-  }
+    .score-high-color {
+      color: var(--score-high);
+    }
 
-  .spinner {
-    width: 40px; height: 40px;
-    border: 3px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-  }
+    .score-mid-color {
+      color: var(--score-mid);
+    }
 
-  .error-icon { font-size: 2.5rem; }
+    .score-low-color {
+      color: var(--score-low);
+    }
 
-  footer {
-    border-top: 1px solid var(--border);
-    margin-top: 60px; padding-top: 24px;
-    display: flex; justify-content: space-between; align-items: center;
-    flex-wrap: wrap; gap: 12px;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem; color: var(--muted); letter-spacing: 0.06em;
-  }
+    .score-bar-high {
+      background: var(--score-high);
+    }
 
-  #last-updated { color: var(--accent); }
+    .score-bar-mid {
+      background: var(--score-mid);
+    }
 
-  @media (max-width: 640px) {
-    .brand-text h1 { font-size: 1.5rem; }
-    header { padding: 28px 0 28px; }
-    .stats-bar { grid-template-columns: 1fr 1fr; }
-  }
-</style>
+    .score-bar-low {
+      background: var(--score-low);
+    }
+
+    .reason-text {
+      font-size: .8rem;
+      color: var(--muted);
+      max-width: 220px;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .apply-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: linear-gradient(135deg, var(--accent), #00c98a);
+      color: #050d0a;
+      border: none;
+      border-radius: 9px;
+      padding: 8px 16px;
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: .8rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .2s;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(0, 229, 160, .2);
+    }
+
+    .apply-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 229, 160, .35);
+    }
+
+    .apply-btn.disabled {
+      background: var(--surface2);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      box-shadow: none;
+      cursor: default;
+    }
+
+    /* ── CARD LIST (mobile) ── */
+    .card-list {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .job-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      transition: border-color .2s;
+      animation: rowIn .3s ease both;
+    }
+
+    .job-card:hover {
+      border-color: rgba(0, 229, 160, .3);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-weight: 700;
+      font-size: .95rem;
+      color: var(--text);
+      line-height: 1.3;
+      margin-bottom: 3px;
+    }
+
+    .card-company {
+      font-weight: 600;
+      color: var(--accent3);
+      font-size: .82rem;
+    }
+
+    .card-score-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .card-score-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+
+    .card-score-label {
+      font-family: 'DM Mono', monospace;
+      font-size: .6rem;
+      letter-spacing: .08em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .card-score-bar {
+      width: 48px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 2px;
+    }
+
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .card-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: .78rem;
+      color: var(--muted);
+    }
+
+    .card-reason {
+      font-size: .8rem;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 12px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* ── BREAKPOINT: switch to cards at 700px ── */
+    @media(max-width: 700px) {
+      .table-wrapper {
+        display: none;
+      }
+      .card-list {
+        display: flex;
+      }
+    }
+
+    /* ── STATES ── */
+    .state-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px;
+      gap: 14px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: .82rem;
+      letter-spacing: .05em;
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+
+    .error-icon {
+      font-size: 2.2rem;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      margin-top: 48px;
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-family: 'DM Mono', monospace;
+      font-size: .68rem;
+      color: var(--muted);
+      letter-spacing: .06em;
+    }
+
+    #last-updated {
+      color: var(--accent);
+    }
+  </style>
 </head>
 <body>
-<div class="container">
+  <div class="container">
 
-  <header>
-    <div class="brand">
-      <div class="brand-icon">📡</div>
-      <div class="brand-text">
-        <h1>Job Radar</h1>
-        <p>Live Opportunity Tracker · Refreshes every 6h</p>
+    <header>
+      <div class="brand">
+        <div class="brand-icon">📡</div>
+        <div class="brand-text">
+          <h1>Job Radar</h1>
+          <p>Live Opportunity Tracker · Refreshes every 6h</p>
+        </div>
+      </div>
+      <div class="header-meta">
+        <div class="live-badge">
+          <div class="live-dot"></div>
+          LIVE FEED
+        </div>
+        <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M23 4v6h-6M1 20v-6h6" />
+            <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
+          </svg>
+          Refresh
+        </button>
+      </div>
+    </header>
+
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-label">Total Jobs</div>
+        <div class="stat-value" id="statTotal">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Top Matches ≥8</div>
+        <div class="stat-value" id="statHigh" style="color:var(--score-high)">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg Score</div>
+        <div class="stat-value" id="statAvg" style="color:var(--accent3)">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Companies</div>
+        <div class="stat-value" id="statCompanies" style="color:var(--accent2)">—</div>
       </div>
     </div>
-    <div class="header-meta">
-      <div class="live-badge">
-        <div class="live-dot"></div>
-        LIVE FEED
-      </div>
-      <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
+
+    <div class="controls">
+      <div class="search-wrap">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <path d="M23 4v6h-6M1 20v-6h6"/>
-          <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+          <circle cx="11" cy="11" r="8" />
+          <path d="M21 21l-4.35-4.35" />
         </svg>
-        Refresh
-      </button>
+        <input class="search-input" id="searchInput" type="text" placeholder="Search title, company, location…" oninput="renderAll()" />
+      </div>
+      <select class="filter-select" id="scoreFilter" onchange="renderAll()">
+        <option value="">All Scores</option>
+        <option value="high">Top Match (8–10)</option>
+        <option value="mid">Mid Match (5–7)</option>
+        <option value="low">Low Match (1–4)</option>
+      </select>
+      <div class="sort-btns">
+        <button class="sort-btn active" id="sortScore" onclick="toggleSort('score')">Score ↕</button>
+        <button class="sort-btn" id="sortDate" onclick="toggleSort('date')">Date ↕</button>
+      </div>
     </div>
-  </header>
 
-  <div class="stats-bar">
-    <div class="stat-card">
-      <div class="stat-label">Total Jobs</div>
-      <div class="stat-value" id="statTotal">—</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Top Matches (≥ 8)</div>
-      <div class="stat-value" id="statHigh" style="color:var(--score-high)">—</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Avg Score</div>
-      <div class="stat-value" id="statAvg" style="color:var(--accent3)">—</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Companies</div>
-      <div class="stat-value" id="statCompanies" style="color:var(--accent2)">—</div>
-    </div>
-  </div>
+    <div class="result-count" id="resultCount"></div>
 
-  <div class="controls">
-    <div class="search-wrap">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-      </svg>
-      <input class="search-input" id="searchInput" type="text" placeholder="Search job title, company, location…" oninput="renderTable()"/>
-    </div>
-    <select class="filter-select" id="scoreFilter" onchange="renderTable()">
-      <option value="">All Scores</option>
-      <option value="high">Top Match (8–10)</option>
-      <option value="mid">Mid Match (5–7)</option>
-      <option value="low">Low Match (1–4)</option>
-    </select>
-    <button class="sort-btn" id="sortScore" onclick="toggleSort('score')">Score ↕</button>
-    <button class="sort-btn" id="sortDate" onclick="toggleSort('date')">Date ↕</button>
-  </div>
-
-  <div class="result-count" id="resultCount"></div>
-
-  <div class="table-wrapper" id="tableWrapper">
-    <div class="state-box"><div class="spinner"></div><span>Loading jobs…</span></div>
-  </div>
-
-  <footer>
-    <span>Data syncs from Google Sheets every 6 hours</span>
-    <span>Last fetched: <span id="last-updated">—</span></span>
-  </footer>
-</div>
-
-<script>
-// ── CONFIG ─────────────────────────────────────────────────────────────────
-
-// IMPORTANT: Sheet must be published via File → Share → Publish to web → CSV
-const CSV_URL = `https://docs.google.com/spreadsheets/d/e/2PACX-1vSpJuMPpVY94UkVHBiY19uwe9PkygVMjhVsICLzwRI2QzVjriFdQDYL5VHwV7RQdslVoqACFXci5Kc8/pub?gid=0&single=true&output=csv
-`;
-
-// ── STATE ──────────────────────────────────────────────────────────────────
-let allJobs = [];
-let sortKey = 'score';
-let sortDir = -1;
-
-// ── FETCH ──────────────────────────────────────────────────────────────────
-async function loadData() {
-  const btn = document.getElementById('refreshBtn');
-  btn.classList.add('spinning');
-  setTableState('loading');
-
-  try {
-    const res = await fetch(CSV_URL + '&t=' + Date.now());
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const text = await res.text();
-    allJobs = parseCSV(text);
-    if (allJobs.length === 0) throw new Error('Sheet is empty or column headers not found');
-    updateStats();
-    renderTable();
-    document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
-  } catch (err) {
-    console.error(err);
-    setTableState('error', err.message);
-  } finally {
-    btn.classList.remove('spinning');
-  }
-}
-
-// ── PARSE CSV ──────────────────────────────────────────────────────────────
-function parseCSV(text) {
-  const rows = [];
-  const lines = text.split('\n');
-  if (lines.length < 2) return rows;
-
-  const headers = parseCSVLine(lines[0]).map(h =>
-    h.trim().toLowerCase().replace(/[^a-z0-9]/g, '_')
-  );
-
-  for (let i = 1; i < lines.length; i++) {
-    const line = lines[i].trim();
-    if (!line) continue;
-    const cols = parseCSVLine(line);
-    const obj = {};
-    headers.forEach((h, idx) => { obj[h] = (cols[idx] || '').trim(); });
-    if (!obj['job_title'] && !obj['company']) continue;
-    rows.push(obj);
-  }
-  return rows;
-}
-
-function parseCSVLine(line) {
-  const result = [];
-  let cur = '';
-  let inQuote = false;
-  for (let i = 0; i < line.length; i++) {
-    const c = line[i];
-    if (c === '"') {
-      if (inQuote && line[i + 1] === '"') { cur += '"'; i++; }
-      else inQuote = !inQuote;
-    } else if (c === ',' && !inQuote) {
-      result.push(cur); cur = '';
-    } else {
-      cur += c;
-    }
-  }
-  result.push(cur);
-  return result;
-}
-
-// ── STATS ──────────────────────────────────────────────────────────────────
-function updateStats() {
-  const scores = allJobs.map(j => parseFloat(j.score)).filter(s => !isNaN(s));
-  const avg = scores.length
-    ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1)
-    : '—';
-  const high = scores.filter(s => s >= 8).length;
-  const companies = new Set(allJobs.map(j => j.company).filter(Boolean)).size;
-
-  document.getElementById('statTotal').textContent = allJobs.length;
-  document.getElementById('statHigh').textContent = high;
-  document.getElementById('statAvg').textContent = avg;
-  document.getElementById('statCompanies').textContent = companies;
-}
-
-// ── SORT ───────────────────────────────────────────────────────────────────
-function toggleSort(key) {
-  if (sortKey === key) sortDir *= -1;
-  else { sortKey = key; sortDir = -1; }
-  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('sort' + key.charAt(0).toUpperCase() + key.slice(1)).classList.add('active');
-  renderTable();
-}
-
-// ── RENDER ─────────────────────────────────────────────────────────────────
-function renderTable() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const sf = document.getElementById('scoreFilter').value;
-
-  let jobs = allJobs.filter(j => {
-    const matchQ = !q ||
-      (j.job_title || '').toLowerCase().includes(q) ||
-      (j.company || '').toLowerCase().includes(q) ||
-      (j.location || '').toLowerCase().includes(q);
-
-    const score = parseFloat(j.score) || 0;
-    // 1-10 scale: high=8-10, mid=5-7, low=1-4
-    const matchScore =
-      sf === ''     ? true :
-      sf === 'high' ? score >= 8 :
-      sf === 'mid'  ? score >= 5 && score < 8 :
-      sf === 'low'  ? score > 0 && score < 5 : true;
-
-    return matchQ && matchScore;
-  });
-
-  jobs.sort((a, b) => {
-    if (sortKey === 'score') {
-      return ((parseFloat(b.score) || 0) - (parseFloat(a.score) || 0)) * sortDir * -1;
-    }
-    if (sortKey === 'date') {
-      return (new Date(b.posted_date) - new Date(a.posted_date)) * sortDir * -1;
-    }
-    return 0;
-  });
-
-  document.getElementById('resultCount').innerHTML =
-    `Showing <span>${jobs.length}</span> of <span>${allJobs.length}</span> jobs`;
-
-  if (jobs.length === 0) { setTableState('empty'); return; }
-
-  const wrap = document.getElementById('tableWrapper');
-  let html = `
-    <table>
-      <thead>
-        <tr>
-          <th>Job Title</th>
-          <th>Company</th>
-          <th>Location</th>
-          <th>Posted</th>
-          <th>Applicants</th>
-          <th>Score /10</th>
-          <th>Reason</th>
-          <th>Apply</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
-
-  jobs.forEach((j, i) => {
-    const score = parseFloat(j.score) || 0;
-    // 1-10 scale tiers
-    const tier = score >= 8 ? 'high' : score >= 5 ? 'mid' : 'low';
-    const colorClass = `score-${tier}-color`;
-    const barClass   = `score-bar-${tier}`;
-    const barWidth   = Math.round((score / 10) * 100);
-
-    const url = j['job_url'] || j['job-url'] || j['joburl'] || j['url'] || '';
-    const applyBtn = url
-      ? `<a class="apply-btn" href="${escHtml(url)}" target="_blank" rel="noopener">
-           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-             <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
-             <polyline points="15 3 21 3 21 9"/>
-             <line x1="10" y1="14" x2="21" y2="3"/>
-           </svg>
-           Apply
-         </a>`
-      : `<span class="apply-btn disabled">No URL</span>`;
-
-    const delay = Math.min(i * 0.03, 0.6);
-    html += `
-      <tr style="animation-delay:${delay}s">
-        <td><div class="job-title">${escHtml(j.job_title || '—')}</div></td>
-        <td><div class="company">${escHtml(j.company || '—')}</div></td>
-        <td>
-          <div class="location">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
-              <circle cx="12" cy="10" r="3"/>
-            </svg>
-            ${escHtml(j.location || '—')}
-          </div>
-        </td>
-        <td><div class="posted-date">${formatDate(j.posted_date)}</div></td>
-        <td><div class="app-count">👥 ${escHtml(j.application_count || '—')}</div></td>
-        <td>
-          <div class="score-cell">
-            <div class="score-bar-bg">
-              <div class="score-bar-fill ${barClass}" style="width:${barWidth}%"></div>
-            </div>
-            <span class="score-num ${colorClass}">${score > 0 ? score : '—'}</span>
-          </div>
-        </td>
-        <td><div class="reason-text">${escHtml(j.reason || '—')}</div></td>
-        <td>${applyBtn}</td>
-      </tr>
-    `;
-  });
-
-  html += '</tbody></table>';
-  wrap.innerHTML = html;
-}
-
-// ── STATES ─────────────────────────────────────────────────────────────────
-function setTableState(type, msg = '') {
-  const wrap = document.getElementById('tableWrapper');
-  if (type === 'loading') {
-    wrap.innerHTML = `<div class="state-box"><div class="spinner"></div><span>Fetching live jobs…</span></div>`;
-  } else if (type === 'error') {
-    wrap.innerHTML = `
+    <div class="table-wrapper" id="tableWrapper">
       <div class="state-box">
-        <div class="error-icon">⚠️</div>
-        <span>Failed to load data</span>
-        <span style="font-size:0.72rem;opacity:.6">${escHtml(msg)}</span>
-        <span style="font-size:0.72rem;opacity:.5;max-width:420px;text-align:center;line-height:1.7">
-          Go to Google Sheets → File → Share → Publish to web → choose your sheet → CSV → Publish.<br>
-          Also make sure sharing is set to "Anyone with the link can view".
-        </span>
-      </div>`;
-  } else if (type === 'empty') {
-    wrap.innerHTML = `<div class="state-box"><div class="error-icon">🔍</div><span>No matching jobs found</span></div>`;
-  }
-}
+        <div class="spinner"></div><span>Fetching live jobs…</span>
+      </div>
+    </div>
 
-// ── HELPERS ────────────────────────────────────────────────────────────────
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
+    <div class="card-list" id="cardList">
+      <div class="state-box">
+        <div class="spinner"></div><span>Fetching live jobs…</span>
+      </div>
+    </div>
 
-function formatDate(dateStr) {
-  if (!dateStr) return '—';
-  const d = new Date(dateStr);
-  if (isNaN(d)) return dateStr;
-  return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: '2-digit' });
-}
+    <footer>
+      <span>Data syncs from Google Sheets every 6 hours</span>
+      <span>Last fetched: <span id="last-updated">—</span></span>
+    </footer>
 
-// ── INIT ───────────────────────────────────────────────────────────────────
-loadData();
-setInterval(loadData, 6 * 60 * 60 * 1000);
-</script>
+  </div>
+
+  <script>
+    // ── CONFIG ─────────────────────────────────────────────────────────────────
+    // Sheet must be published: File → Share → Publish to web → CSV
+    const CSV_URL = `https://docs.google.com/spreadsheets/d/e/2PACX-1vSpJuMPpVY94UkVHBiY19uwe9PkygVMjhVsICLzwRI2QzVjriFdQDYL5VHwV7RQdslVoqACFXci5Kc8/pub?gid=0&single=true&output=csv`;
+
+    // ── STATE ──────────────────────────────────────────────────────────────────
+    let allJobs = [], sortKey = 'score', sortDir = -1;
+
+    // ── FETCH ──────────────────────────────────────────────────────────────────
+    async function loadData() {
+      const btn = document.getElementById('refreshBtn');
+      btn.classList.add('spinning');
+      setLoadingState();
+      
+      try {
+        const res = await fetch(CSV_URL + '&t=' + Date.now());
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const text = await res.text();
+        
+        allJobs = parseCSV(text);
+        if (allJobs.length === 0) throw new Error('Sheet is empty or column headers not found');
+        
+        updateStats();
+        renderAll();
+        document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
+      } catch (err) {
+        console.error(err);
+        setErrorState(err.message);
+      } finally {
+        btn.classList.remove('spinning');
+      }
+    }
+
+    // ── PARSE CSV ──────────────────────────────────────────────────────────────
+    function parseCSV(text) {
+      const rows = [];
+      const lines = text.split('\n');
+      if (lines.length < 2) return rows;
+      
+      const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase().replace(/[^a-z0-9]/g, '_'));
+      
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        
+        const cols = parseCSVLine(line);
+        const obj = {};
+        
+        headers.forEach((h, idx) => { 
+          obj[h] = (cols[idx] || '').trim(); 
+        });
+        
+        if (!obj['job_title'] && !obj['company']) continue;
+        rows.push(obj);
+      }
+      return rows;
+    }
+
+    function parseCSVLine(line) {
+      const result = []; 
+      let cur = ''; 
+      let inQ = false;
+      
+      for (let i = 0; i < line.length; i++) {
+        const c = line[i];
+        if (c === '"') { 
+          if (inQ && line[i + 1] === '"') { 
+            cur += '"'; 
+            i++; 
+          } else {
+            inQ = !inQ; 
+          }
+        } else if (c === ',' && !inQ) { 
+          result.push(cur); 
+          cur = ''; 
+        } else {
+          cur += c;
+        }
+      }
+      result.push(cur);
+      return result;
+    }
+
+    // ── STATS ──────────────────────────────────────────────────────────────────
+    function updateStats() {
+      const scores = allJobs.map(j => parseFloat(j.score)).filter(s => !isNaN(s));
+      const avg = scores.length ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : '—';
+      
+      document.getElementById('statTotal').textContent = allJobs.length;
+      document.getElementById('statHigh').textContent = scores.filter(s => s >= 8).length;
+      document.getElementById('statAvg').textContent = avg;
+      document.getElementById('statCompanies').textContent = new Set(allJobs.map(j => j.company).filter(Boolean)).size;
+    }
+
+    // ── SORT ───────────────────────────────────────────────────────────────────
+    function toggleSort(key) {
+      if (sortKey === key) {
+        sortDir *= -1; 
+      } else { 
+        sortKey = key; 
+        sortDir = -1; 
+      }
+      
+      document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('sort' + key.charAt(0).toUpperCase() + key.slice(1)).classList.add('active');
+      renderAll();
+    }
+
+    // ── FILTER + SORT ──────────────────────────────────────────────────────────
+    function getFiltered() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const sf = document.getElementById('scoreFilter').value;
+      
+      let jobs = allJobs.filter(j => {
+        const matchQ = !q ||
+          (j.job_title || '').toLowerCase().includes(q) ||
+          (j.company || '').toLowerCase().includes(q) ||
+          (j.location || '').toLowerCase().includes(q);
+          
+        const score = parseFloat(j.score) || 0;
+        const matchScore = sf === '' ? true : 
+                           sf === 'high' ? score >= 8 : 
+                           sf === 'mid' ? score >= 5 && score < 8 : 
+                           sf === 'low' ? score > 0 && score < 5 : true;
+                           
+        return matchQ && matchScore;
+      });
+      
+      jobs.sort((a, b) => {
+        if (sortKey === 'score') return ((parseFloat(b.score) || 0) - (parseFloat(a.score) || 0)) * sortDir * -1;
+        if (sortKey === 'date') return (new Date(b.posted_date) - new Date(a.posted_date)) * sortDir * -1;
+        return 0;
+      });
+      
+      return jobs;
+    }
+
+    // ── RENDER BOTH VIEWS ──────────────────────────────────────────────────────
+    function renderAll() {
+      const jobs = getFiltered();
+      document.getElementById('resultCount').innerHTML = `Showing <span>${jobs.length}</span> of <span>${allJobs.length}</span> jobs`;
+      
+      if (jobs.length === 0) { 
+        setEmptyState(); 
+        return; 
+      }
+      
+      renderTable(jobs);
+      renderCards(jobs);
+    }
+
+    function scoreInfo(score) {
+      const tier = score >= 8 ? 'high' : score >= 5 ? 'mid' : 'low';
+      return { 
+        tier, 
+        colorClass: `score-${tier}-color`, 
+        barClass: `score-bar-${tier}`, 
+        barWidth: Math.round((score / 10) * 100) 
+      };
+    }
+
+    // ── TABLE VIEW (≥701px) ────────────────────────────────────────────────────
+    function renderTable(jobs) {
+      const wrap = document.getElementById('tableWrapper');
+      let html = `
+        <table>
+          <thead>
+            <tr>
+              <th>Job Title</th>
+              <th>Company</th>
+              <th>Location</th>
+              <th>Posted</th>
+              <th>Applicants</th>
+              <th>Score /10</th>
+              <th>Reason</th>
+              <th>Apply</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      jobs.forEach((j, i) => {
+        const score = parseFloat(j.score) || 0;
+        const { colorClass, barClass, barWidth } = scoreInfo(score);
+        const url = j['job_url'] || j['job-url'] || j['joburl'] || j['url'] || '';
+        
+        const applyBtn = url
+          ? `<a class="apply-btn" href="${escHtml(url)}" target="_blank" rel="noopener">
+               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                 <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+                 <polyline points="15 3 21 3 21 9"/>
+                 <line x1="10" y1="14" x2="21" y2="3"/>
+               </svg>Apply
+             </a>`
+          : `<span class="apply-btn disabled">No URL</span>`;
+
+        html += `
+          <tr style="animation-delay:${Math.min(i * .03, .6)}s">
+            <td><div class="job-title">${escHtml(j.job_title || '—')}</div></td>
+            <td><div class="company">${escHtml(j.company || '—')}</div></td>
+            <td>
+              <div class="location">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>${escHtml(j.location || '—')}
+              </div>
+            </td>
+            <td><div class="posted-date">${formatDate(j.posted_date)}</div></td>
+            <td><div class="app-count">👥 ${escHtml(j.application_count || '—')}</div></td>
+            <td>
+              <div class="score-cell">
+                <div class="score-bar-bg"><div class="score-bar-fill ${barClass}" style="width:${barWidth}%"></div></div>
+                <span class="score-num ${colorClass}">${score > 0 ? score : '—'}</span>
+              </div>
+            </td>
+            <td><div class="reason-text">${escHtml(j.reason || '—')}</div></td>
+            <td>${applyBtn}</td>
+          </tr>
+        `;
+      });
+
+      html += '</tbody></table>';
+      wrap.innerHTML = html;
+    }
+
+    // ── CARD VIEW (≤700px) ─────────────────────────────────────────────────────
+    function renderCards(jobs) {
+      const list = document.getElementById('cardList');
+      let html = '';
+
+      jobs.forEach((j, i) => {
+        const score = parseFloat(j.score) || 0;
+        const { colorClass, barClass, barWidth } = scoreInfo(score);
+        const url = j['job_url'] || j['job-url'] || j['joburl'] || j['url'] || '';
+        
+        const applyBtn = url
+          ? `<a class="apply-btn" href="${escHtml(url)}" target="_blank" rel="noopener" style="font-size:.78rem;padding:7px 14px">Apply →</a>`
+          : `<span class="apply-btn disabled" style="font-size:.78rem;padding:7px 14px">No URL</span>`;
+
+        html += `
+          <div class="job-card" style="animation-delay:${Math.min(i * .04, .8)}s">
+            <div class="card-top">
+              <div>
+                <div class="card-title">${escHtml(j.job_title || '—')}</div>
+                <div class="card-company">${escHtml(j.company || '—')}</div>
+              </div>
+              <div class="card-score-badge">
+                <span class="card-score-num ${colorClass}">${score > 0 ? score : '—'}</span>
+                <span class="card-score-label">Score</span>
+                <div class="card-score-bar">
+                  <div class="score-bar-fill ${barClass}" style="width:${barWidth}%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="card-meta">
+              <div class="card-meta-item">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>${escHtml(j.location || '—')}
+              </div>
+              <div class="card-meta-item">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>${formatDate(j.posted_date)}
+              </div>
+              ${j.application_count ? `<div class="card-meta-item" style="color:var(--accent2)">👥 ${escHtml(j.application_count)}</div>` : ''}
+            </div>
+            ${j.reason ? `<div class="card-reason">${escHtml(j.reason)}</div>` : ''}
+            <div class="card-footer">
+              ${applyBtn}
+              ${score > 0 ? `<span style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted)">${score >= 8 ? 'Top match' : score >= 5 ? 'Mid match' : 'Low match'}</span>` : ''}
+            </div>
+          </div>
+        `;
+      });
+
+      list.innerHTML = html;
+    }
+
+    // ── STATES ─────────────────────────────────────────────────────────────────
+    function setLoadingState() {
+      const s = `<div class="state-box"><div class="spinner"></div><span>Fetching live jobs…</span></div>`;
+      document.getElementById('tableWrapper').innerHTML = s;
+      document.getElementById('cardList').innerHTML = s;
+    }
+
+    function setErrorState(msg) {
+      const s = `
+        <div class="state-box">
+          <div class="error-icon">⚠️</div>
+          <span>Failed to load data</span>
+          <span style="font-size:.7rem;opacity:.6">${escHtml(msg)}</span>
+          <span style="font-size:.7rem;opacity:.5;max-width:380px;text-align:center;line-height:1.7">
+            Go to Google Sheets → File → Share → Publish to web → choose your sheet → CSV → Publish.<br>
+            Also ensure sharing is set to "Anyone with the link can view".
+          </span>
+        </div>
+      `;
+      document.getElementById('tableWrapper').innerHTML = s;
+      document.getElementById('cardList').innerHTML = s;
+    }
+
+    function setEmptyState() {
+      const s = `<div class="state-box"><div class="error-icon">🔍</div><span>No matching jobs found</span></div>`;
+      document.getElementById('tableWrapper').innerHTML = s;
+      document.getElementById('cardList').innerHTML = s;
+    }
+
+    // ── HELPERS ────────────────────────────────────────────────────────────────
+    function escHtml(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '—';
+      const d = new Date(dateStr);
+      if (isNaN(d)) return dateStr;
+      return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: '2-digit' });
+    }
+
+    // ── INIT ───────────────────────────────────────────────────────────────────
+    loadData();
+    setInterval(loadData, 6 * 60 * 60 * 1000);
+  </script>
 </body>
 </html>
