@@ -326,6 +326,34 @@ input[type=range]::-moz-range-thumb {
   border-radius: 6px; padding: 3px 8px; color: var(--gold);
 }
 
+/* ── JOB DESCRIPTION ── */
+.card-desc-wrap {
+  margin-top: 12px;
+  border-top: 1px solid var(--edge);
+  padding-top: 10px;
+  flex-shrink: 0;
+}
+.card-desc-toggle {
+  display: flex; align-items: center; gap: 6px;
+  background: none; border: none; cursor: pointer; padding: 0;
+  font-family: 'JetBrains Mono', monospace; font-size: .6rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--blue);
+  opacity: .75; transition: opacity .2s;
+  user-select: none;
+}
+.card-desc-toggle:hover { opacity: 1; }
+.card-desc-toggle svg { transition: transform .25s; flex-shrink: 0; }
+.card-desc-toggle.open svg { transform: rotate(180deg); }
+.card-desc-body {
+  display: none; margin-top: 8px;
+  max-height: 110px; overflow-y: auto;
+  font-size: .76rem; color: var(--ink2); line-height: 1.6;
+  scrollbar-width: thin; scrollbar-color: var(--edge2) transparent;
+}
+.card-desc-body::-webkit-scrollbar { width: 4px; }
+.card-desc-body::-webkit-scrollbar-thumb { background: var(--edge2); border-radius: 4px; }
+.card-desc-body.open { display: block; }
+
 /* ── ACTIONS ── */
 .actions {
   display: flex; justify-content: center; align-items: center; gap: 14px;
@@ -666,6 +694,7 @@ function buildCard(job, pos) {
   const dateStr = job._date ? job._date.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'2-digit'}) : (job.posted_date || job.date_added || '');
   const reason = job.reason||'';
   const tags = extractTags(job);
+  const desc = job.job_description || job.jobdescription || job.description || '';
 
   const div = document.createElement('div');
   div.className = 'job-card ' + (pos===0?'top':pos===1?'back-1':'back-2');
@@ -704,8 +733,22 @@ function buildCard(job, pos) {
     <div class="card-sep"></div>
     ${reason ? `<div class="card-reason">${esc(reason)}</div>` : ''}
     ${tags.length ? `<div class="card-skills">${tags.map(t=>`<span class="skill-tag">${esc(t)}</span>`).join('')}</div>` : ''}
+    ${desc ? `
+    <div class="card-desc-wrap">
+      <button class="card-desc-toggle" onclick="toggleDesc(this)" onpointerdown="event.stopPropagation()">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        Job Description
+      </button>
+      <div class="card-desc-body">${esc(desc)}</div>
+    </div>` : ''}
   `;
   return div;
+}
+
+function toggleDesc(btn) {
+  btn.classList.toggle('open');
+  const body = btn.nextElementSibling;
+  body.classList.toggle('open');
 }
 
 function extractTags(job) {
